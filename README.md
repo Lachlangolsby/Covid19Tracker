@@ -6,3 +6,4 @@ It is based on the [COVID 19 API](https://covid19api.com/), a free API for data 
 
 This project is part of a university course on mobile application development using the Android platform.
 
+//test comment 
