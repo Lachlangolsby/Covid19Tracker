@@ -17,10 +17,9 @@ public class MainActivity extends AppCompatActivity {
         //From the onCreate method of an activity, find the button
         Button button = findViewById(R.id.btLaunchActivty);
 
-        //2. Create activity (detailActivity) and set up layout
 
 
-        //5. Create an onClickListener to launch detail activity. Run and test app.
+        //2. Create an onClickListener to launch detail activity. Run and test app.
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
