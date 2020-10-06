@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.view.LayoutInflaterFactory;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DecimalFormat;
@@ -20,10 +19,6 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
     public CountryAdapter(ArrayList<Country> countries, RecyclerViewClickListener listener) {
         mCountries = countries;
         mListener = listener;
-    }
-
-    public interface RecyclerViewClickListener {
-        void onClick(View view, String countryCode);
     }
 
     @NonNull
@@ -43,10 +38,14 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
         holder.itemView.setTag(country.getCountryCode());
     }
 
-
     @Override
     public int getItemCount() {
         return mCountries.size();
+    }
+
+
+    public interface RecyclerViewClickListener {
+        void onClick(View view, String countryCode);
     }
 
     public static class CountryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
