@@ -3,8 +3,8 @@ package au.edu.unsw.infs3634.covidtracker;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -12,11 +12,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SearchView;
 
+import com.google.gson.Gson;
+
 public class MainActivity extends AppCompatActivity {
+
     private RecyclerView mRecyclerView;
     private CountryAdapter mAdapter;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,41 +34,42 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        mAdapter = new CountryAdapter(Country.getCountries(),listener);
+        Gson gson = new Gson();
+        Response response = gson.fromJson(Response.json, Response.class);
+        mAdapter = new CountryAdapter(response.getCountries(), listener);
+        mAdapter.sort(CountryAdapter.SORT_METHOD_TOTAL);
         mRecyclerView.setAdapter(mAdapter);
     }
-
-        //3. Create launchDetailActivity method. Uses explicit intent to start activity
+    // this is a test comment, please see
     private void launchDetailActivity (String message) {
-        Intent intent = new Intent ( this, DetailActivity.class);
+        Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(DetailActivity.INTENT_MESSAGE, message);
         startActivity(intent);
-
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu){
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
-        SearchView SearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
-        SearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+        SearchView searchView  = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit (String query){
+            public boolean onQueryTextSubmit(String query) {
                 mAdapter.getFilter().filter(query);
                 return false;
             }
+
             @Override
-            public boolean onQueryTextChange(String newText){
+            public boolean onQueryTextChange(String newText) {
                 mAdapter.getFilter().filter(newText);
                 return false;
             }
-
-        } );return true;
+        });
+        return true;
     }
     @Override
-    public boolean onOptionsItemSelected (MenuItem item){
-        switch (item.getItemId()){
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
             case R.id.sort_new:
                 mAdapter.sort(CountryAdapter.SORT_METHOD_NEW);
                 return true;
@@ -78,6 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-        }
+}
+
 
 
