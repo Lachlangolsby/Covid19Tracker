@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new CountryAdapter(response.getCountries(), listener);
         mAdapter.sort(CountryAdapter.SORT_METHOD_TOTAL);
         mRecyclerView.setAdapter(mAdapter);
+
+        String i = "hello world";
     }
     // this is a test comment, please see
     private void launchDetailActivity (String message) {

@@ -8,12 +8,10 @@ import android.widget.Filterable;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.core.view.LayoutInflaterFactory;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -60,9 +58,6 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
             }
         };
     }
-    public interface RecyclerViewClickListener {
-        void onClick(View view, String countryCode);
-    }
 
     @NonNull
     @Override
@@ -81,10 +76,30 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
         holder.itemView.setTag(country.getCountryCode());
     }
 
-
     @Override
     public int getItemCount() {
-        return mCountriesFiltered.size();
+       return mCountriesFiltered.size();
+    }
+
+    public void sort(final int sortMethod) {
+        if (mCountriesFiltered.size() > 0) {
+            Collections.sort(mCountriesFiltered, new Comparator<Country>() {
+                @Override
+                public int compare(Country o1, Country o2) {
+                    if (sortMethod == SORT_METHOD_NEW) {
+                        return o2.getNewConfirmed().compareTo(o1.getNewConfirmed());
+                    } else if (sortMethod == SORT_METHOD_TOTAL) {
+                        return o2.getTotalConfirmed().compareTo(o1.getTotalConfirmed());
+                    }
+                    return o2.getTotalConfirmed().compareTo(o1.getTotalConfirmed());
+                }
+            });
+        }
+        notifyDataSetChanged();
+    }
+
+    public interface RecyclerViewClickListener {
+        void onClick(View view, String countryCode);
     }
 
     public static class CountryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -105,20 +120,5 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
         public void onClick(View v) {
             listener.onClick(v, (String) v.getTag());
         }
-    }
-    public void sort(final int sortMethod){
-        if(mCountriesFiltered.size()>0){
-            Collections.sort(mCountriesFiltered, new Comparator<Country>() {
-                @Override
-                public int compare(Country o1, Country o2) {
-                    if (sortMethod == SORT_METHOD_NEW) {
-                        return o2.getNewConfirmed().compareTo(o1.getNewConfirmed());
-                    } else if (sortMethod == SORT_METHOD_TOTAL) {
-                        return o2.getTotalConfirmed().compareTo(o1.getTotalConfirmed());
-                    }
-                    return o2.getTotalConfirmed().compareTo(o1.getTotalConfirmed());
-                }
-            });
-        } notifyDataSetChanged();
     }
 }
