@@ -1,14 +1,18 @@
 package au.edu.unsw.infs3634.covidtracker;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.bumptech.glide.Glide;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -24,11 +28,16 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
     private RecyclerViewClickListener mListener;
 
 
+
+
     public CountryAdapter(List<Country> countries, RecyclerViewClickListener listener) {
         mCountries = countries;
         mCountriesFiltered = countries;
         mListener = listener;
+
+
     }
+
 
     @Override
     public Filter getFilter() {
@@ -66,6 +75,8 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
         return new CountryViewHolder(v, mListener);
     }
 
+
+
     @Override
     public void onBindViewHolder(@NonNull CountryViewHolder holder, int position) {
         Country country = mCountriesFiltered.get(position);
@@ -74,6 +85,7 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
         holder.totalcases.setText(df.format(country.getTotalConfirmed()));
         holder.newCases.setText("+" + df.format(country.getNewConfirmed()));
         holder.itemView.setTag(country.getCountryCode());
+       Glide.with(holder.context).load("https://www.countryflags.io/"+country.getCountryCode()+"/shiny/64.png").into(holder.Image);
     }
 
     @Override
@@ -105,6 +117,8 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
     public static class CountryViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView country, totalcases, newCases;
         private CountryAdapter.RecyclerViewClickListener listener;
+        public ImageView Image;
+       public Context context;
 
 
         public CountryViewHolder(@NonNull View itemView, RecyclerViewClickListener listener) {
@@ -114,11 +128,19 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
             country = itemView.findViewById(R.id.tvCountry);
             totalcases = itemView.findViewById(R.id.tvTotalCases);
             newCases = itemView.findViewById(R.id.tvNewCases);
+            Image = itemView.findViewById(R.id.ivFlag);
+            context = itemView.getContext();
         }
 
         @Override
         public void onClick(View v) {
             listener.onClick(v, (String) v.getTag());
         }
+    }
+
+    public void setCountries(List<Country> countries) {
+        mCountriesFiltered.clear();
+        mCountriesFiltered.addAll(countries);
+        notifyDataSetChanged();
     }
 }

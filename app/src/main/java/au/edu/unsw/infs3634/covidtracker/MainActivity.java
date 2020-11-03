@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -12,12 +13,22 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.SearchView;
 
+import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView mRecyclerView;
     private CountryAdapter mAdapter;
+    String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,13 +45,34 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
-        Gson gson = new Gson();
-        Response response = gson.fromJson(Response.json, Response.class);
-        mAdapter = new CountryAdapter(response.getCountries(), listener);
+
+        mAdapter = new CountryAdapter(new ArrayList<Country>(), listener);
         mAdapter.sort(CountryAdapter.SORT_METHOD_TOTAL);
         mRecyclerView.setAdapter(mAdapter);
 
-        String i = "hello world";
+
+        Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.covid19api.com/").
+                addConverterFactory(GsonConverterFactory.create())
+                .build();
+        CovidService service = retrofit.create(CovidService.class);
+        Call<Response> responseCall = service.getResponse();
+        responseCall.enqueue(new Callback<Response>() {
+            @Override
+            public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                List<Country> countries = response.body().getCountries();
+                mAdapter.setCountries(countries);
+                mAdapter.sort(CountryAdapter.SORT_METHOD_TOTAL);
+                // Log.d("1", "Countries list has been updated");
+
+
+            }
+
+            @Override
+            public void onFailure(Call<Response> call, Throwable t) {
+
+            }
+        });
+
     }
     // this is a test comment, please see
     private void launchDetailActivity (String message) {

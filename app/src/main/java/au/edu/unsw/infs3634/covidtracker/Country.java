@@ -11,7 +11,7 @@ public class Country {
     private String country;
     @SerializedName("CountryCode")
     @Expose
-    private String countryCode;
+    private static String countryCode;
     @SerializedName("Slug")
     @Expose
     private String slug;
@@ -48,7 +48,7 @@ public class Country {
         this.country = country;
     }
 
-    public String getCountryCode() {
+    public static String getCountryCode() {
         return countryCode;
     }
 
