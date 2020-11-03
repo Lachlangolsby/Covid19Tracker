@@ -26,6 +26,7 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
     private List<Country> mCountries;
     private List<Country> mCountriesFiltered;
     private RecyclerViewClickListener mListener;
+    private List<Response> API;
 
 
 
@@ -85,7 +86,7 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
         holder.totalcases.setText(df.format(country.getTotalConfirmed()));
         holder.newCases.setText("+" + df.format(country.getNewConfirmed()));
         holder.itemView.setTag(country.getCountryCode());
-       Glide.with(holder.context).load("https://www.countryflags.io/"+country.getCountryCode()+"/shiny/64.png").into(holder.Image);
+        Glide.with(holder.context).load("https://www.countryflags.io/"+country.getCountryCode().trim().toLowerCase()+"/shiny/64.png").into(holder.Image);
     }
 
     @Override
@@ -118,7 +119,7 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryV
         public TextView country, totalcases, newCases;
         private CountryAdapter.RecyclerViewClickListener listener;
         public ImageView Image;
-       public Context context;
+        public Context context;
 
 
         public CountryViewHolder(@NonNull View itemView, RecyclerViewClickListener listener) {

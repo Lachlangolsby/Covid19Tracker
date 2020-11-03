@@ -14,7 +14,7 @@
         android:text="Country"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageView6"
+        app:layout_constraintStart_toEndOf="@+id/ivFlag"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -163,7 +163,7 @@
         app:srcCompat="@android:drawable/ic_menu_search" />
 
     <ImageView
-        android:id="@+id/imageView6"
+        android:id="@+id/ivFlag"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"

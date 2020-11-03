@@ -3,17 +3,16 @@ package au.edu.unsw.infs3634.covidtracker;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Bundle;
 import android.content.Intent;
-import android.util.Log;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SearchView;
 
-import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -25,10 +24,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
-
     private RecyclerView mRecyclerView;
     private CountryAdapter mAdapter;
-    String url;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +34,13 @@ public class MainActivity extends AppCompatActivity {
 
         mRecyclerView = findViewById(R.id.rvList);
         mRecyclerView.setHasFixedSize(true);
-
         CountryAdapter.RecyclerViewClickListener listener = new CountryAdapter.RecyclerViewClickListener() {
             @Override
             public void onClick(View view, String countryCode) {
                 launchDetailActivity(countryCode);
             }
         };
+
 
 
         mAdapter = new CountryAdapter(new ArrayList<Country>(), listener);
@@ -74,18 +71,19 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
-    // this is a test comment, please see
-    private void launchDetailActivity (String message) {
+
+
+    private void launchDetailActivity(String message) {
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra(DetailActivity.INTENT_MESSAGE, message);
         startActivity(intent);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
-        SearchView searchView  = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        SearchView searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -101,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         });
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -114,7 +113,6 @@ public class MainActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+
 }
-
-
-
