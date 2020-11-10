@@ -2,6 +2,7 @@ package au.edu.unsw.infs3634.covidtracker;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.room.Room;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -26,6 +28,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private CountryAdapter mAdapter;
+    private CountryDatabase CountryDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,8 +50,16 @@ public class MainActivity extends AppCompatActivity {
         mAdapter.sort(CountryAdapter.SORT_METHOD_TOTAL);
         mRecyclerView.setAdapter(mAdapter);
 
+        CountryDB = Room.databaseBuilder(getApplicationContext(), CountryDatabase.class, "country-database").build();
+Executors.newSingleThreadExecutor().execute(new Runnable() {
+    @Override
+    public void run() {
+        mAdapter.setCountries(CountryDB.countryDao().getCountries());
+        mAdapter.sort(CountryAdapter.SORT_METHOD_TOTAL);
 
-        Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.covid19api.com/").
+    }
+});
+                Retrofit retrofit = new Retrofit.Builder().baseUrl("https://api.covid19api.com/").
                 addConverterFactory(GsonConverterFactory.create())
                 .build();
         CovidService service = retrofit.create(CovidService.class);
@@ -57,9 +68,18 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
                 List<Country> countries = response.body().getCountries();
-                mAdapter.setCountries(countries);
-                mAdapter.sort(CountryAdapter.SORT_METHOD_TOTAL);
-                // Log.d("1", "Countries list has been updated");
+                Executors.newSingleThreadExecutor().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        CountryDB.countryDao().deleteAll(CountryDB.countryDao().getCountries().toArray(new Country[0]));
+                CountryDB.countryDao().insertCountries(countries.toArray(new Country[0]));
+
+
+                    }
+                });
+//                mAdapter.setCountries(countries);
+//
+
 
 
             }

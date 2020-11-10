@@ -1,13 +1,19 @@
 package au.edu.unsw.infs3634.covidtracker;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-
+@Entity
 public class Country {
 
     @SerializedName("Country")
     @Expose
     private String country;
+    @PrimaryKey
+    @NonNull
     @SerializedName("CountryCode")
     @Expose
     private String countryCode;
@@ -35,9 +41,7 @@ public class Country {
     @SerializedName("Date")
     @Expose
     private String date;
-    @SerializedName("Premium")
-    @Expose
-    private Premium premium;
+
 
     public String getCountry() {
         return country;
@@ -117,14 +121,6 @@ public class Country {
 
     public void setDate(String date) {
         this.date = date;
-    }
-
-    public Premium getPremium() {
-        return premium;
-    }
-
-    public void setPremium(Premium premium) {
-        this.premium = premium;
     }
 
 }

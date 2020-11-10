@@ -1,6 +1,7 @@
 package au.edu.unsw.infs3634.covidtracker;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Room;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +17,7 @@ import com.google.gson.Gson;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,6 +36,7 @@ public class DetailActivity extends AppCompatActivity {
     private TextView mTotalRecovered;
     private ImageView mSearch;
     private ImageView mFlag;
+    private CountryDatabase CountryDB;
 
 
     @Override
@@ -51,8 +54,44 @@ public class DetailActivity extends AppCompatActivity {
         mSearch = findViewById(R.id.Search);
         mFlag =findViewById(R.id.ivFlag);
 
+
         Intent intent = getIntent();
         String countryCode = intent.getStringExtra(INTENT_MESSAGE);
+
+
+        CountryDB = Room.databaseBuilder(getApplicationContext(), CountryDatabase.class, "country-database").build();
+
+        Executors.newSingleThreadExecutor().execute(new Runnable() {
+            @Override
+            public void run() {
+                Country country = CountryDB.countryDao().getCountry(countryCode);
+                DecimalFormat df = new DecimalFormat("#,###,###,###");
+                        setTitle(country.getCountryCode());
+                        mCountry.setText(country.getCountry());
+                        mNewCases.setText(df.format(country.getNewConfirmed()));
+                        mTotalCases.setText(df.format(country.getTotalConfirmed()));
+                        mTotalDeaths.setText(df.format(country.getTotalDeaths()));
+                        mNewDeaths.setText(df.format(country.getNewDeaths()));
+                        mNewRecovered.setText(df.format(country.getNewRecovered()));
+                        mTotalRecovered.setText(df.format(country.getTotalRecovered()));
+//                if (country.getCountryCode() != null) {
+//                    Glide.with(mFlag).load("https://www.countryflags.io/" + country.getCountryCode().trim().toLowerCase() + "/shiny/64.png").into(mFlag);
+//                }
+
+
+
+
+                        mSearch.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                searchCountry(country.getCountry());
+                            }
+                        });
+
+
+            }
+        });
+
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.covid19api.com/")
@@ -69,15 +108,6 @@ public class DetailActivity extends AppCompatActivity {
                 for (final Country country : countries) {
                     if (country.getCountryCode().equals(countryCode)) {
                         // update the TextViews with the data of the country object
-                        DecimalFormat df = new DecimalFormat("#,###,###,###");
-                        setTitle(country.getCountryCode());
-                        mCountry.setText(country.getCountry());
-                        mNewCases.setText(df.format(country.getNewConfirmed()));
-                        mTotalCases.setText(df.format(country.getTotalConfirmed()));
-                        mTotalDeaths.setText(df.format(country.getTotalDeaths()));
-                        mNewDeaths.setText(df.format(country.getNewDeaths()));
-                        mNewRecovered.setText(df.format(country.getNewRecovered()));
-                        mTotalRecovered.setText(df.format(country.getTotalRecovered()));
                         if (country.getCountryCode() != null) {
                             Glide.with(mFlag).load("https://www.countryflags.io/" + country.getCountryCode().trim().toLowerCase() + "/shiny/64.png").into(mFlag);
                         }
