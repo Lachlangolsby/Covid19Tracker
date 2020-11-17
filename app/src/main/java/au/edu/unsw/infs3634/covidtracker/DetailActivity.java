@@ -1,6 +1,8 @@
 package au.edu.unsw.infs3634.covidtracker;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.room.Database;
 import androidx.room.Room;
 
 import android.content.Context;
@@ -8,10 +10,18 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.text.DecimalFormat;
@@ -37,6 +47,7 @@ public class DetailActivity extends AppCompatActivity {
     private ImageView mSearch;
     private ImageView mFlag;
     private CountryDatabase CountryDB;
+    private CheckBox mHome;
 
 
     @Override
@@ -52,7 +63,8 @@ public class DetailActivity extends AppCompatActivity {
         mNewRecovered = findViewById(R.id.tvNewRecovered);
         mTotalRecovered = findViewById(R.id.tvTotalRecovered);
         mSearch = findViewById(R.id.Search);
-        mFlag =findViewById(R.id.ivFlag);
+        mFlag = findViewById(R.id.ivFlag);
+        mHome = findViewById(R.id.cbHome);
 
 
         Intent intent = getIntent();
@@ -66,29 +78,54 @@ public class DetailActivity extends AppCompatActivity {
             public void run() {
                 Country country = CountryDB.countryDao().getCountry(countryCode);
                 DecimalFormat df = new DecimalFormat("#,###,###,###");
-                        setTitle(country.getCountryCode());
-                        mCountry.setText(country.getCountry());
-                        mNewCases.setText(df.format(country.getNewConfirmed()));
-                        mTotalCases.setText(df.format(country.getTotalConfirmed()));
-                        mTotalDeaths.setText(df.format(country.getTotalDeaths()));
-                        mNewDeaths.setText(df.format(country.getNewDeaths()));
-                        mNewRecovered.setText(df.format(country.getNewRecovered()));
-                        mTotalRecovered.setText(df.format(country.getTotalRecovered()));
+                setTitle(country.getCountryCode());
+                mCountry.setText(country.getCountry());
+                mNewCases.setText(df.format(country.getNewConfirmed()));
+                mTotalCases.setText(df.format(country.getTotalConfirmed()));
+                mTotalDeaths.setText(df.format(country.getTotalDeaths()));
+                mNewDeaths.setText(df.format(country.getNewDeaths()));
+                mNewRecovered.setText(df.format(country.getNewRecovered()));
+                mTotalRecovered.setText(df.format(country.getTotalRecovered()));
 //                if (country.getCountryCode() != null) {
 //                    Glide.with(mFlag).load("https://www.countryflags.io/" + country.getCountryCode().trim().toLowerCase() + "/shiny/64.png").into(mFlag);
 //                }
 
 
+                mSearch.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        searchCountry(country.getCountry());
+                    }
+                });
+                FirebaseDatabase database = FirebaseDatabase.getInstance();
+                DatabaseReference messageRef = database.getReference(FirebaseAuth.getInstance().getUid());
+                messageRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String result = (String) snapshot.getValue();
+                        if (result != null && result.equals(country.getCountryCode())) {
+                            mHome.setChecked(true);
+                        } else {
+                            mHome.setChecked(false);
+                        }
+                    }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
-                        mSearch.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                searchCountry(country.getCountry());
-                            }
-                        });
-
-
+                    }
+                });
+                mHome.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        DatabaseReference messageRef = database.getReference(FirebaseAuth.getInstance().getUid());
+                        if(isChecked) {
+                            messageRef.setValue(country.getCountryCode());
+                        }else{
+                            messageRef.setValue("");
+                        }
+                    }
+                });
             }
         });
 
@@ -113,7 +150,6 @@ public class DetailActivity extends AppCompatActivity {
                         }
 
 
-
                         mSearch.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -130,9 +166,7 @@ public class DetailActivity extends AppCompatActivity {
             }
         });
 
-
-
-    }
+        }
 
     private void searchCountry(String country){
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://google.com/search?q=covid" + country));

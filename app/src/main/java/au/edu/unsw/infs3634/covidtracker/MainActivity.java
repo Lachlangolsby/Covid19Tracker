@@ -1,5 +1,6 @@
 package au.edu.unsw.infs3634.covidtracker;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
@@ -13,7 +14,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.SearchView;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -50,12 +58,13 @@ public class MainActivity extends AppCompatActivity {
         mAdapter.sort(CountryAdapter.SORT_METHOD_TOTAL);
         mRecyclerView.setAdapter(mAdapter);
 
-        CountryDB = Room.databaseBuilder(getApplicationContext(), CountryDatabase.class, "country-database").build();
-Executors.newSingleThreadExecutor().execute(new Runnable() {
+    CountryDB = Room.databaseBuilder(getApplicationContext(), CountryDatabase.class, "country-database").build();
+    Executors.newSingleThreadExecutor().execute(new Runnable() {
     @Override
     public void run() {
         mAdapter.setCountries(CountryDB.countryDao().getCountries());
         mAdapter.sort(CountryAdapter.SORT_METHOD_TOTAL);
+
 
     }
 });
@@ -68,6 +77,10 @@ Executors.newSingleThreadExecutor().execute(new Runnable() {
             @Override
             public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
                 List<Country> countries = response.body().getCountries();
+
+
+
+
                 Executors.newSingleThreadExecutor().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -77,8 +90,31 @@ Executors.newSingleThreadExecutor().execute(new Runnable() {
 
                     }
                 });
-//                mAdapter.setCountries(countries);
-//
+
+                FirebaseDatabase db = FirebaseDatabase.getInstance();
+                DatabaseReference messageRef = db.getReference(FirebaseAuth.getInstance().getUid());
+                messageRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        String  result = (String) snapshot.getValue();
+                        if(result!= null){
+                            for (Country home: countries){
+                                if(home.getCountryCode().equals(result)){
+                                    Toast.makeText(MainActivity.this, home.getNewConfirmed()+ "New Cases in "
+                                            + home.getCountry(), Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+        //        mAdapter.setData(countries);
+         //       mAdapter.sort(CountryAdapter.SORT_METHOD_TOTAL);
+
 
 
 

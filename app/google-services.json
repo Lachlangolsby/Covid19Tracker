@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1044459286180",
+    "firebase_url": "https://covidtracker-881ab.firebaseio.com",
+    "project_id": "covidtracker-881ab",
+    "storage_bucket": "covidtracker-881ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1044459286180:android:50f31f9f5a6c5fa89e8031",
+        "android_client_info": {
+          "package_name": "au.edu.unsw.infs3634.covidtracker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1044459286180-giid97huuspovdakf93qd6m3uae45bm4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "au.edu.unsw.infs3634.covidtracker",
+            "certificate_hash": "9bc91011f1dfa013d1ae4c304a8655467192b20f"
+          }
+        },
+        {
+          "client_id": "1044459286180-6414r18hfphla7js1ssci7hrehtav8r7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDeiROyGA3dHo41K_uZXNb46S-c7BFCojs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1044459286180-6414r18hfphla7js1ssci7hrehtav8r7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
