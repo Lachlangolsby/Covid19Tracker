@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         CountryDB.countryDao().deleteAll(CountryDB.countryDao().getCountries().toArray(new Country[0]));
                 CountryDB.countryDao().insertCountries(countries.toArray(new Country[0]));
-
+// initiating countries into the adapter. the get country etc in the Country class can now be used as the db is populated
 
                     }
                 });

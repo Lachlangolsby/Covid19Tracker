@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CovidTracker</string>
+    <string name="app_name">UNSW Glossary</string>
     <string name="action_search">search</string>
     <string name="action_sort">sort</string>
     <string name="sort_new">New Cases</string>

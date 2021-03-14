@@ -97,6 +97,7 @@ public class DetailActivity extends AppCompatActivity {
                         searchCountry(country.getCountry());
                     }
                 });
+
                 FirebaseDatabase database = FirebaseDatabase.getInstance();
                 DatabaseReference messageRef = database.getReference(FirebaseAuth.getInstance().getUid());
                 messageRef.addListenerForSingleValueEvent(new ValueEventListener() {
